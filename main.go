@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -29,9 +30,26 @@ var dates = []string{"LaserTag!",
 
 type Template struct {
 	Date string
+	Idx  int
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
+	idx := r.FormValue("Not")
+	var newIdx int
+
+	if idx == "" {
+		newIdx = rand.Intn(len(dates))
+	} else {
+		idxInt, err := strconv.Atoi(idx)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		newIdx = idxInt
+		for newIdx == idxInt {
+			newIdx = rand.Intn(len(dates))
+		}
+	}
+
 	htmlBytes, err := Asset("data/root.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -42,7 +60,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	if err := t.Execute(w, &Template{dates[rand.Intn(len(dates))]}); err != nil {
+	if err := t.Execute(w, &Template{dates[newIdx], newIdx}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -50,5 +68,5 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	rand.Seed(time.Now().Unix())
 	http.HandleFunc("/", rootHandler)
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

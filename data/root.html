@@ -3,7 +3,9 @@
 		<center>
 			<h2>Here's a random date for you!</h2>
 			<p>{{.Date}}</p>
-			<form action="/" method="get" id="form1"></form>
+			<form action="/" method="get" id="form1">
+				<input type="hidden" id="Not" name="Not" value="{{.Idx}}">
+			</form>
 			<button type="submit" form="form1" value="Submit">Generate a new date!</button>
 		</center>
 	</body>
