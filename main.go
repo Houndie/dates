@@ -68,5 +68,5 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	rand.Seed(time.Now().Unix())
 	http.HandleFunc("/", rootHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
